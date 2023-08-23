@@ -1,7 +1,7 @@
 #! /bin/bash
 set -e
 
-PATH="/usr/bin"
+export PATH="$PATH:/usr/bin"
 
 NAME="$1"
 OPTIONS='replica 3'
