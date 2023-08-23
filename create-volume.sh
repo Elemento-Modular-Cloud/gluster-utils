@@ -62,6 +62,10 @@ GLUSTER_CMD="sudo gluster volume create $NAME $OPTIONS transport $TRANSPORT $SER
 echo "Command to be executed:"
 echo "$GLUSTER_CMD"
 
-# "$GLUSTER_CMD"
+"$GLUSTER_CMD"
+
+echo
+echo "Starting volume"
+gluster volume $NAME start
 
 exit 0
