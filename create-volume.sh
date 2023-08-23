@@ -1,12 +1,35 @@
 #! /bin/bash
 set -e
 
+if [ -z "$1" ]
+then
+  echo "Please specify Volume Name as first argument"
+fi
+
+if [ -z "$2" ]
+then
+  echo "Please specify Gluster options as second argument (e.g. 'replica 3')"
+fi
+
+if [ -z "$3" ]
+then
+  echo "Please specify Gluster transport as third argument (e.g. 'tcp')"
+fi
+
+if [ -z "$4" ]
+then
+  echo "Please specify target path as fourth argument"
+fi
+
 NAME="$1"
-OPTIONS='replica 3'
-TRANSPORT='tcp'
+OPTIONS="$2"
+TRANSPORT="$3"
 TARGET_PATH='/mnt/raid1/gluster'
 HOSTNAME=$(/usr/bin/hostname)
-declare -a SERVERS=("zima1.elementohq" "zima2.elementohq" "zima3.elementohq")
+
+shift 4
+
+declare -a SERVERS=("$@")
 
 SERVERS_STRING=""
 for i in "${SERVERS[@]}"
@@ -37,7 +60,7 @@ echo
 echo "Creating gluster volume"
 GLUSTER_CMD="sudo gluster volume create $NAME $OPTIONS transport $TRANSPORT $SERVERS_STRING"
 echo "Command to be executed:"
-echo "   $GLUSTER_CMD"
+echo "$GLUSTER_CMD"
 
 # "$GLUSTER_CMD"
 
