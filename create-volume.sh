@@ -24,7 +24,7 @@ fi
 NAME="$1"
 OPTIONS="$2"
 TRANSPORT="$3"
-TARGET_PATH="$4"
+TARGET_PATH="$4/$NAME"
 HOSTNAME=$(/usr/bin/hostname)
 
 shift 4
@@ -66,6 +66,6 @@ $GLUSTER_CMD
 
 echo
 echo "Starting volume"
-gluster volume $NAME start
+gluster volume start $NAME
 
 exit 0
