@@ -1,6 +1,8 @@
 #! /bin/bash
 set -e
 
+PATH="/usr/bin"
+
 NAME="$1"
 OPTIONS='replica 3'
 TRANSPORT='tcp'
@@ -16,14 +18,14 @@ do
       echo "$i is localhost"
       sudo mkdir -p "$PATH"
    else
-      if [ "`/usr/bin/ping -c 1 $i`" ]
+      if [ "`ping -c 1 $i`" ]
       then
         echo "$i is available"
       else
         echo "$i is unreachable. Aborting."
         exit 1
       fi
-      /usr/bin/ssh $USER@$i -t "sudo mkdir -p $PATH"
+      ssh $USER@$i -t "sudo mkdir -p $PATH"
    fi
    SERVERS_STRING="$SERVERS_STRING $i$PATH"
 done
