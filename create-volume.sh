@@ -24,7 +24,7 @@ fi
 NAME="$1"
 OPTIONS="$2"
 TRANSPORT="$3"
-TARGET_PATH='/mnt/raid1/gluster'
+TARGET_PATH="$4"
 HOSTNAME=$(/usr/bin/hostname)
 
 shift 4
