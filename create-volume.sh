@@ -17,7 +17,7 @@ do
      echo "$i is unreachable. Aborting."
      exit 1
    fi
-   /usr/bin/ssh $USER@$i "mkdir -p $PATH"
+   /usr/bin/ssh $USER@$i "sudo mkdir -p $PATH"
    SERVERS_STRING="$SERVERS_STRING $i$PATH"
 done
 
