@@ -58,7 +58,7 @@ done
 
 echo
 echo "Creating gluster volume"
-GLUSTER_CMD="sudo gluster volume create $NAME $OPTIONS transport $TRANSPORT $SERVERS_STRING"
+GLUSTER_CMD="sudo gluster volume create $NAME $OPTIONS transport $TRANSPORT $SERVERS_STRING force"
 echo "Command to be executed:"
 echo "$GLUSTER_CMD"
 
