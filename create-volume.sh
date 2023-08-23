@@ -52,7 +52,7 @@ do
       echo "Creating target directory"
       ssh $USER@$i -t "sudo mkdir -p $TARGET_PATH"
    fi
-   SERVERS_STRING="$SERVERS_STRING $i$TARGET_PATH"
+   SERVERS_STRING="$SERVERS_STRING $i:$TARGET_PATH"
    echo
 done
 
