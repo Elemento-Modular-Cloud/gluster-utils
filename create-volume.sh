@@ -1,17 +1,28 @@
 #! /bin/bash
+set -e
 
-NAME='datavault'
+NAME="$1"
 OPTIONS='replica 3'
 TRANSPORT='tcp'
 PATH='/mnt/raid1/gluster'
 declare -a SERVERS=("zima1.elementohq" "zima2.elementohq" "zima3.elementohq")
+
 SERVERS_STRING=""
 for i in "${SERVERS[@]}"
 do
-   echo "$i"
+   if [ "`ping -c 1 $i`" ]
+   then
+     echo "$i is available"
+   else
+     echo "$i is unreachable. Aborting."
+     exit 1
+   fi
+   ssh $USER@$i "mkdir -p $PATH"
    SERVERS_STRING="$SERVERS_STRING $i$PATH"
 done
 
-echo "$SERVERS_STRING"
+BASE_CMD="gluster volume create $NAME $OPTIONS transport $TRANSPORT $SERVERS_STRING"
 
-BASE_CMD="gluster volume create $NAME $OPTIONS transport $TRANSPORT zima1.elementohq:/mnt/raid1/gluster/datavault zima2.elementohq:/mnt/raid1/gluster/datavault zima3.elementohq:/mnt/raid1/gluster/datavault"
+sudo "$BASE_CMD"
+
+exit 0
