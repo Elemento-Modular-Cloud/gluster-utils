@@ -1,8 +1,6 @@
 #! /bin/bash
 set -e
 
-echo $PATH
-
 NAME="$1"
 OPTIONS='replica 3'
 TRANSPORT='tcp'
