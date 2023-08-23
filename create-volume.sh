@@ -9,7 +9,7 @@ SERVERS_STRING=""
 for i in "${SERVERS[@]}"
 do
    echo "$i"
-   SERVERS_STRING=SERVERS_STRING+"$i$PATH "
+   SERVERS_STRING="$SERVERS_STRING $i$PATH"
 done
 
 echo "$SERVERS_STRING"
