@@ -29,6 +29,6 @@ done
 
 GLUSTER_CMD="sudo gluster volume create $NAME $OPTIONS transport $TRANSPORT $SERVERS_STRING"
 
-"$GLUSTER_CMD"
+# "$GLUSTER_CMD"
 
 exit 0
