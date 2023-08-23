@@ -66,6 +66,6 @@ $GLUSTER_CMD
 
 echo
 echo "Starting volume"
-gluster volume start $NAME
+sudo gluster volume start $NAME
 
 exit 0
