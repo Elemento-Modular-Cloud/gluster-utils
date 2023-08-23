@@ -10,19 +10,25 @@ declare -a SERVERS=("zima1.elementohq" "zima2.elementohq" "zima3.elementohq")
 SERVERS_STRING=""
 for i in "${SERVERS[@]}"
 do
-   if [ "`/usr/bin/ping -c 1 $i`" ]
+   if [ $i == $(hostname) ]
    then
-     echo "$i is available"
+      echo "$i is localhost"
+      sudo mkdir -p "$PATH"
    else
-     echo "$i is unreachable. Aborting."
-     exit 1
+      if [ "`/usr/bin/ping -c 1 $i`" ]
+      then
+        echo "$i is available"
+      else
+        echo "$i is unreachable. Aborting."
+        exit 1
+      fi
+      /usr/bin/ssh $USER@$i -t "sudo mkdir -p $PATH"
    fi
-   /usr/bin/ssh $USER@$i -t "sudo mkdir -p $PATH"
    SERVERS_STRING="$SERVERS_STRING $i$PATH"
 done
 
-BASE_CMD="gluster volume create $NAME $OPTIONS transport $TRANSPORT $SERVERS_STRING"
+GLUSTER_CMD="sudo gluster volume create $NAME $OPTIONS transport $TRANSPORT $SERVERS_STRING"
 
-sudo "$BASE_CMD"
+"$GLUSTER_CMD"
 
 exit 0
