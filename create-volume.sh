@@ -5,12 +5,13 @@ NAME="$1"
 OPTIONS='replica 3'
 TRANSPORT='tcp'
 PATH='/mnt/raid1/gluster'
+HOSTNAME=$(/usr/bin/hostname)
 declare -a SERVERS=("zima1.elementohq" "zima2.elementohq" "zima3.elementohq")
 
 SERVERS_STRING=""
 for i in "${SERVERS[@]}"
 do
-   if [ $i == $(hostname) ]
+   if [ $i == $HOSTNAME ]
    then
       echo "$i is localhost"
       sudo mkdir -p "$PATH"
