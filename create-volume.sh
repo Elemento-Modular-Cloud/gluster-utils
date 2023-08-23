@@ -10,7 +10,7 @@ declare -a SERVERS=("zima1.elementohq" "zima2.elementohq" "zima3.elementohq")
 SERVERS_STRING=""
 for i in "${SERVERS[@]}"
 do
-   if [ "`ping -c 1 $i`" ]
+   if [ "`/usr/bin/ping -c 1 $i`" ]
    then
      echo "$i is available"
    else
