@@ -1,0 +1,53 @@
+- name: centos-release-gluster
+  yum:
+    name: centos-release-gluster9
+    
+- name: install gluster
+  package:
+    name:
+    - glusterfs-server
+  when:
+    - ansible_pkg_mgr == "dnf"
+
+- name: Reload service 
+  systemd:
+    name: glusterd
+    enabled: true
+    state: started
+
+- name: Create a trusted storage pool
+  gluster.gluster.gluster_peer:
+    state: present
+    nodes:
+      - 10.4.0.4
+      - 10.4.0.5
+
+- name: create gluster volume
+  gluster.gluster.gluster_volume:
+    state: present
+    name: gv0
+    bricks: /bricks/gv0
+    rebalance: yes
+    cluster:
+      - 10.4.0.4
+      - 10.4.0.5
+  run_once: true
+
+- name: start gluster volume
+  gluster.gluster.gluster_volume:
+    state: started
+    name: gv0
+
+- name: Create vault-share
+  file:
+    path: vault-share
+    state: directory
+    mode: '0755'
+
+- name: Mount gluster volume
+  ansible.posix.mount:
+    path: /mnt/vault-share
+    src: 127.0.0.1:/gv0
+    fstype: nfs
+    opts: defaults,_netdev,vers=3
+    state: present
