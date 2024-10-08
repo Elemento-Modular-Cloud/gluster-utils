@@ -1,0 +1,85 @@
+#ansible all -m ping
+#ansible-playbook install_packages/main.yml
+#ansible-playbook -i hosts -u elemento --become-password-file psw install_packages/main.yml
+- name: Install basics requirements
+  hosts: all
+  become: true
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: centos-release-gluster
+      yum:
+        name: centos-release-gluster10
+
+    - name: install gluster
+      package:
+        name:
+        - glusterfs-server
+      when:
+        - ansible_pkg_mgr == "dnf"
+
+    - name: Reload service 
+      systemd:
+        name: glusterd
+        enabled: true
+        state: started
+
+    - name: Ensure firewalld is running
+      ansible.builtin.service:
+        name: firewalld
+        state: started
+        enabled: true
+
+    - name: Add gluster service to firewalld
+      ansible.builtin.firewalld:
+        service: glusterfs
+        permanent: true
+        state: enabled
+        immediate: yes
+
+    - name: Create a trusted storage pool
+      gluster.gluster.gluster_peer:
+        state: present
+        nodes:
+          - orbital-mini-1
+          - orbital-mini-2
+          - orbital-mini-3
+
+    - name: Delete a folder
+      ansible.builtin.file:
+        path: /mnt/elemento-vault/bricks
+        state: absent
+
+    - name: create gluster volume
+      gluster.gluster.gluster_volume:
+        state: present
+        name: gv0
+        bricks: /mnt/elemento-vault/bricks
+        rebalance: yes
+        cluster:
+          - orbital-mini-1
+          - orbital-mini-2
+          - orbital-mini-3
+      run_once: true
+      when: inventory_hostname == groups['node'][0]
+
+    - name: start gluster volume
+      gluster.gluster.gluster_volume:
+        state: started
+        name: gv0
+
+    - name: Create /mnt/vault-share
+      file:
+        path: /mnt/vault-share
+        state: directory
+        mode: '0755'
+
+    - name: Mount gluster volume
+      ansible.posix.mount:
+        path: /mnt/vault-share
+        src: 127.0.0.1:/gv0
+        fstype: glusterfs
+        opts: defaults,_netdev
+        state: present
+        dump: 0
+        passno: 2
