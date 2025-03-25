@@ -7,6 +7,16 @@
   become_user: root
   become_method: sudo
   tasks:
+    - name: copy hostfile
+      lineinfile:
+        dest: /etc/hosts
+        create: yes
+        line: "{{ item }}"
+      with_items:
+        - "192.168.1.1 atomos-cluster-1"
+        - "192.168.1.2 atomos-cluster-2"
+        - "192.168.1.3 atomos-cluster-3"
+
     - name: centos-release-gluster
       yum:
         name: centos-release-gluster10
@@ -41,25 +51,25 @@
       gluster.gluster.gluster_peer:
         state: present
         nodes:
-          - orbital-mini-1
-          - orbital-mini-2
-          - orbital-mini-3
+          - atomos-cluster-1
+          - atomos-cluster-2
+          - atomos-cluster-3
 
     - name: Delete a folder
       ansible.builtin.file:
-        path: /mnt/elemento-vault/bricks
+        path: /mnt/raid1-vault/bricks
         state: absent
 
     - name: create gluster volume
       gluster.gluster.gluster_volume:
         state: present
         name: gv0
-        bricks: /mnt/elemento-vault/bricks
-        rebalance: yes
+        bricks: /mnt/raid1-vault/bricks
+        replicas: 3
         cluster:
-          - orbital-mini-1
-          - orbital-mini-2
-          - orbital-mini-3
+          - atomos-cluster-1
+          - atomos-cluster-2
+          - atomos-cluster-3
       run_once: true
       when: inventory_hostname == groups['node'][0]
 
